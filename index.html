@@ -838,6 +838,94 @@
         @keyframes ribbon-rotate {
             to { transform: rotate(360deg); }
         }
+		/* ЧИСТО CSS — через 5 секунд показываем результат */
+#loading {
+    animation: fadeOut 0.8s ease 5s forwards;
+}
+
+#result {
+    opacity: 0;
+    animation: fadeIn 1s ease 5.5s forwards;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+        display: none;
+    }
+}
+
+/* Чистый аккуратный итоговый блок */
+.result-block {
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    animation: fadeIn 1s ease forwards;
+    animation-delay: 5s;
+}
+
+.result-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(255,255,255,0.6);
+}
+
+.result-emoji {
+    font-size: 80px;
+    margin: 10px 0;
+    animation: bounce 2.5s ease-in-out infinite;
+}
+
+.result-date {
+    font-size: 32px;
+    font-weight: 900;
+    color: white;
+    margin: 15px 0;
+    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+}
+
+.result-text {
+    font-size: 18px;
+    line-height: 1.5;
+    color: white;
+    margin: 15px 0;
+}
+
+.result-celebrate {
+    font-size: 34px;
+    margin-top: 15px;
+}
+
+/* Исчезновение loading-блока */
+#loading {
+    opacity: 1;
+    visibility: visible;
+    animation: fadeOut .7s ease forwards;
+    animation-delay: 5s;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+@keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
     </style>
 </head>
 <body>
@@ -870,11 +958,23 @@
                 <div class="emoji">🎅 📊 ✨</div>
             </div>
 
-            <div class="result" id="result" style="display: none;">
-                <div class="result-title">🎁 Отлично!</div>
-                <p style="margin-bottom: 25px;">
-                    Мы начали подсчет всех твоих данных за 2025 год!
-                </p>
+            <div id="result" class="result-block">
+    <div class="result-title">🎁 Подарок уже в пути!</div>
+
+    <div class="result-emoji">🎁</div>
+
+    <div class="result-date">30 декабря</div>
+
+    <p class="result-text">
+        Мы собрали все твои данные за 2025 год:<br>
+        сообщения, стикеры, реакции, голосовые и многое другое ✨<br><br>
+        Возвращайся <b>30 декабря в 12:00 по МСК</b> —<br>
+        твой новогодний сюрприз будет ждать тебя 🎄✨
+    </p>
+
+    <div class="result-celebrate">🎉🎈✨</div>
+</div>
+
                 
                 <div class="countdown">
                     <div class="countdown-confetti" style="left: 10%; animation-delay: 0s;">🎊</div>
@@ -882,5 +982,4 @@
                     <div class="countdown-confetti" style="right: 30%; animation-delay: 2s;">🎈</div>
                     <div class="countdown-confetti" style="right: 10%; animation-delay: 3s;">✨</div>
                     
-                    <div class="countdown-title">📅 Твои итоги будут готовы:</div>
-                    <div class="countdown-timer" id="
+                    
