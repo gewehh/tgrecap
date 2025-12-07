@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Твои итоги 2025 года</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: white;
+            font-size: 1.5em;
+            opacity: 0.9;
+            pointer-events: none;
+            animation: fall linear infinite;
+            z-index: 1;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.6;
+            pointer-events: none;
+            animation: float linear infinite;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) translateX(100px); opacity: 0; }
+        }
+
+        .star {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s ease-in-out infinite;
+            box-shadow: 0 0 5px white;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        .bokeh {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            opacity: 0.3;
+            filter: blur(20px);
+            animation: bokeh-float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes bokeh-float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(100px, -100px) scale(1.5); }
+            66% { transform: translate(-100px, 100px) scale(0.8); }
+        }
+
+        .lights {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            display: flex;
+            justify-content: space-around;
+            z-index: 2;
+            filter: blur(0.5px);
+        }
+
+        .light {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+            position: relative;
+        }
+
+        .light::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .light:nth-child(1) { background: linear-gradient(135deg, #ff6b6b, #ff8787); box-shadow: 0 0 20px #ff6b6b; animation-delay: 0s; }
+        .light:nth-child(2) { background: linear-gradient(135deg, #4ecdc4, #6ee7de); box-shadow: 0 0 20px #4ecdc4; animation-delay: 0.4s; }
+        .light:nth-child(3) { background: linear-gradient(135deg, #ffe66d, #fff195); box-shadow: 0 0 20px #ffe66d; animation-delay: 0.8s; }
+        .light:nth-child(4) { background: linear-gradient(135deg, #a8e6cf, #c4f5e0); box-shadow: 0 0 20px #a8e6cf; animation-delay: 1.2s; }
+        .light:nth-child(5) { background: linear-gradient(135deg, #ff8b94, #ffa5ac); box-shadow: 0 0 20px #ff8b94; animation-delay: 1.6s; }
+        .light:nth-child(6) { background: linear-gradient(135deg, #b4a7d6, #cbbfed); box-shadow: 0 0 20px #b4a7d6; animation-delay: 2s; }
+        .light:nth-child(7) { background: linear-gradient(135deg, #ffd93d, #ffe770); box-shadow: 0 0 20px #ffd93d; animation-delay: 2.4s; }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        }
+
+        .floating-emoji {
+            position: fixed;
+            font-size: 40px;
+            opacity: 0.6;
+            pointer-events: none;
+            animation: float-emoji 15s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes float-emoji {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+            50% { transform: translateY(-50px) rotate(180deg); opacity: 0.3; }
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 100px 20px 40px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+            position: relative;
+        }
+
+        .header::before, .header::after {
+            content: '✨';
+            position: absolute;
+            font-size: 30px;
+            animation: spin-glow 4s ease-in-out infinite;
+        }
+
+        .header::before { left: 10%; top: 50%; }
+        .header::after { right: 10%; top: 50%; animation-delay: 2s; }
+
+        @keyframes spin-glow {
+            0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.8; }
+            50% { transform: rotate(180deg) scale(1.3); opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, #f0f0f0, #fff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            margin-bottom: 10px;
+            animation: shimmer 3s ease-in-out infinite;
+            letter-spacing: 1px;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            font-weight: 500;
+        }
+
+        .tree {
+            font-size: 80px;
+            margin: 20px 0;
+            animation: sway 3s ease-in-out infinite;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+            position: relative;
+        }
+
+        .tree::before, .tree::after {
+            content: '✨';
+            position: absolute;
+            font-size: 20px;
+            animation: tree-sparkle 2s ease-in-out infinite;
+        }
+
+        .tree::before { left: 20%; top: 30%; }
+        .tree::after { right: 20%; top: 50%; animation-delay: 1s; }
+
+        @keyframes tree-sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-5deg) scale(1); }
+            50% { transform: rotate(5deg) scale(1.05); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 60px rgba(255, 255, 255, 0.1);
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-corner {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.6;
+            animation: corner-glow 3s ease-in-out infinite;
+        }
+
+        .card-corner.top-left { top: 15px; left: 15px; }
+        .card-corner.top-right { top: 15px; right: 15px; animation-delay: 0.75s; }
+        .card-corner.bottom-left { bottom: 15px; left: 15px; animation-delay: 1.5s; }
+        .card-corner.bottom-right { bottom: 15px; right: 15px; animation-delay: 2.25s; }
+
+        @keyframes corner-glow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .loading, .checking, .result, .gift-screen, .referral-screen {
+            text-align: center;
+            padding: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+
+        .spinner::after {
+            content: '✨';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            animation: spin-reverse 2s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes spin-reverse {
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+
+        .loading-text, .checking-text {
+            font-size: 22px;
+            color: #fff;
+            font-weight: 700;
+            margin: 15px 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            animation: pulse-text 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .emoji {
+            font-size: 32px;
+            margin: 15px 0;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .result-title, .gift-title {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)); }
+            50% { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)); }
+        }
+
+        .result p, .gift-screen p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 16px;
+            font-weight: 500;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .countdown {
+            background: linear-gradient(135deg, #ff6b6b, #ff8b94, #ffa5ac);
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+            color: white;
+            padding: 35px;
+            border-radius: 25px;
+            margin: 25px 0;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(255, 107, 107, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .countdown::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .countdown-confetti {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0.7;
+            animation: confetti-fall 4s ease-in-out infinite;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(100px) rotate(360deg); opacity: 0; }
+        }
+
+        .countdown-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .countdown-timer {
+            font-size: 42px;
+            font-weight: 900;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            letter-spacing: 2px;
+        }
+
+        .gift {
+            font-size: 60px;
+            animation: bounce-rotate 3s ease-in-out infinite;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+        }
+
+        @keyframes bounce-rotate {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(-10deg); }
+            75% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        .mega-gift {
+            font-size: 120px;
+            animation: mega-bounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+            margin: 30px 0;
+        }
+
+        @keyframes mega-bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+        }
+
+        .stats-preview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine-slow 5s infinite;
+        }
+
+        @keyframes shine-slow {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-item:nth-child(1) { animation-delay: 0.1s; }
+        .stat-item:nth-child(2) { animation-delay: 0.2s; }
+        .stat-item:nth-child(3) { animation-delay: 0.3s; }
+        .stat-item:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            animation: icon-bounce 3s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes icon-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .decorative-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: badge-float 3s ease-in-out infinite;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes badge-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .badges-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4ecdc4, #44a89e);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 15px 5px;
+            box-shadow: 0 6px 25px rgba(78, 205, 196, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 3px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .btn-share {
+            background: linear-gradient(135deg, #ff6b6b, #ff8787);
+            box-shadow: 0 6px 25px rgba(255, 107, 107, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-share:active {
+            box-shadow: 0 3px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #fff3cd, #ffe8a1);
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 25px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(255, 193, 7, 0.3);
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #d4edda, #b8dfc6);
+            border: 2px solid #28a745;
+            color: #155724;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 25px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(40, 167, 69, 0.3);
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4ecdc4, #44a89e);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.6);
+        }
+
+        .referral-link {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            color: rgba(255, 255, 255, 0.95);
+            word-break: break-all;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .sparkle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: sparkle-anim 2s ease-out;
+            z-index: 100;
+            box-shadow: 0 0 10px white;
+        }
+
+        @keyframes sparkle-anim {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        .ribbon {
+            position: fixed;
+            width: 120px;
+            height: 120px;
+            opacity: 0.4;
+            pointer-events: none;
+            animation: ribbon-rotate 20s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes ribbon-rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .firework {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: firework-explode 1s ease-out;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @keyframes firework-explode {
+            0% { transform: translate(0, 0); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 16px;
+            font-weight: 600;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="lights">
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+        <div class="light"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="tree">🎄</div>
+            <h1 class="title">Твои итоги 2025 года</h1>
+            <p class="subtitle">✨ в Telegram ✨</p>
+        </div>
+
+        <div class="card" id="mainContent">
+            <div class="card-corner top-left">⭐</div>
+            <div class="card-corner top-right">🌟</div>
+            <div class="card-corner bottom-left">✨</div>
+            <div class="card-corner bottom-right">💫</div>
+
+            <!-- Экран проверки подписок -->
+            <div class="checking" id="checking">
+                <div class="spinner"></div>
+                <div class="checking-text">Проверяем подписки...</div>
+                <div class="emoji">🔍 📡 ✨</div>
+            </div>
+
+            <!-- Экран требования подписки -->
+			<!-- Экран требования подписки -->
+            <div class="warning" id="subscriptionWarning" style="display: none;">
+                ⚠️ <strong>Требуется подписка!</strong><br><br>
+                Пожалуйста, подпишись на все каналы в боте, чтобы продолжить.<br><br>
+                <button class="btn" onclick="location.reload()">✅ Я подписался!</button>
+            </div>
+
+            <!-- Экран реферальной системы -->
+            <div class="referral-screen" id="referralScreen" style="display: none;">
+                <div class="result-title">👥 Пригласи друга!</div>
+                <p style="margin-bottom: 20px;">
+                    Чтобы получить доступ к итогам,<br>пригласи <strong>1 друга</strong> который также выполнит все условия
+                </p>
+                
+                <div class="mega-gift">🎁</div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="referralProgress" style="width: 0%"></div>
+                </div>
+                
+                <p style="margin: 15px 0; font-size: 18px; color: rgba(255, 255, 255, 0.95);">
+                    <strong id="referralCount">0 / 1</strong> друзей
+                </p>
+
+                <div class="badges-container">
+                    <div class="decorative-badge">🚀 Быстро</div>
+                    <div class="decorative-badge">🎯 Легко</div>
+                    <div class="decorative-badge">💎 Награда</div>
+                </div>
+
+                <div class="referral-link" id="referralLink">
+                    Загрузка ссылки...
+                </div>
+
+                <button class="btn btn-share" onclick="shareReferralLink()">
+                    📤 Поделиться ссылкой
+                </button>
+
+                <button class="btn" onclick="checkReferrals()">
+                    🔄 Проверить приглашения
+                </button>
+
+                <p style="margin-top: 20px; font-size: 14px; opacity: 0.8;">
+                    💡 Совет: Отправь ссылку другу в личку!
+                </p>
+            </div>
+
+            <!-- Экран загрузки -->
+            <div class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <div class="loading-text">Подсчитываем твои достижения...</div>
+                <div class="emoji">🎅 📊 ✨</div>
+            </div>
+
+            <!-- Экран подарка -->
+            <div class="gift-screen" id="giftScreen" style="display: none;">
+                <div class="gift-title">🎉 Поздравляем!</div>
+                <div class="mega-gift">🎁</div>
+                <p style="font-size: 22px; margin: 20px 0; font-weight: 700;">
+                    Твой подарок готов!
+                </p>
+                <p style="margin-bottom: 25px;">
+                    Итоги твоего 2025 года готовятся специально для тебя!
+                </p>
+
+                <div class="badges-container">
+                    <div class="decorative-badge">✅ Подписки оформлены</div>
+                    <div class="decorative-badge">✅ Друг приглашен</div>
+                    <div class="decorative-badge">✅ Все готово!</div>
+                </div>
+            </div>
+
+            <!-- Экран результата -->
+            <div class="result" id="result" style="display: none;">
+                <div class="result-title">📅 Следи за датой!</div>
+                <p style="margin-bottom: 25px; font-size: 18px;">
+                    Твои персональные итоги 2025 года<br>будут опубликованы:
+                </p>
+                
+                <div class="countdown">
+                    <div class="countdown-confetti" style="left: 10%; animation-delay: 0s;">🎊</div>
+                    <div class="countdown-confetti" style="left: 30%; animation-delay: 1s;">🎉</div>
+                    <div class="countdown-confetti" style="right: 30%; animation-delay: 2s;">🎈</div>
+                    <div class="countdown-confetti" style="right: 10%; animation-delay: 3s;">✨</div>
+                    
+                    <div class="countdown-title">📅 30 декабря 2025 года</div>
+                    <div class="countdown-timer" id="countdown"></div>
+                    <div class="gift" style="margin-top: 25px;">🎁</div>
+                </div>
+
+                <p style="margin-top: 25px; margin-bottom: 15px; font-size: 18px;">
+                    Мы готовим для тебя что-то особенное! ✨
+                </p>
+
+                <div class="badges-container">
+                    <div class="decorative-badge">🔥 Эксклюзив</div>
+                    <div class="decorative-badge">💎 Премиум</div>
+                    <div class="decorative-badge">⚡ Уникально</div>
+                </div>
+
+                <div class="stats-preview">
+                    <div class="stat-item">
+                        <div class="stat-icon">📱</div>
+                        <div class="stat-label">Твои сообщения</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-label">Топ контакты</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">😂</div>
+                        <div class="stat-label">Любимые эмодзи</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">🌙</div>
+                        <div class="stat-label">Активность</div>
+                    </div>
+                </div>
+
+                <div class="success">
+                    ✅ Ты в списке! Возвращайся 30 декабря!
+                </div>
+
+                <p style="font-size: 14px; opacity: 0.9; margin-top: 15px;">
+                    Не забудь вернуться! 🎯
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            🎄 С наступающим Новым 2026 годом! 🎄
+        </div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        tg.setHeaderColor('#667eea');
+        tg.setBackgroundColor('#667eea');
+
+        const BOT_USERNAME = 'YOUR_BOT_USERNAME'; // Замени на username своего бота (без @)
+        const API_URL = 'http://localhost:8080'; // Замени на URL твоего сервера с ботом
+        let userId = null;
+        let startParam = null;
+
+        // Получаем данные пользователя
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            userId = tg.initDataUnsafe.user.id;
+            startParam = tg.initDataUnsafe.start_param;
+        }
+
+        // Создаем визуальные эффекты
+        function createSnowflakes() {
+            const snowflakes = ['❄', '❅', '❆', '✨', '⭐'];
+            for (let i = 0; i < 30; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.innerHTML = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+                snowflake.style.left = Math.random() * 100 + '%';
+                snowflake.style.fontSize = (Math.random() * 1.5 + 0.8) + 'em';
+                snowflake.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                snowflake.style.animationDelay = Math.random() * 5 + 's';
+                document.body.appendChild(snowflake);
+            }
+        }
+
+        function createParticles() {
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 20 + 15) + 's';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                document.body.appendChild(particle);
+            }
+        }
+
+        function createStars() {
+            for (let i = 0; i < 30; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(star);
+            }
+        }
+
+        function createBokeh() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#a8e6cf', '#ff8b94', '#b4a7d6'];
+            for (let i = 0; i < 8; i++) {
+                const bokeh = document.createElement('div');
+                bokeh.className = 'bokeh';
+                bokeh.style.left = Math.random() * 100 + '%';
+                bokeh.style.top = Math.random() * 100 + '%';
+                bokeh.style.background = colors[Math.floor(Math.random() * colors.length)];
+                bokeh.style.animationDelay = Math.random() * 5 + 's';
+                bokeh.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                document.body.appendChild(bokeh);
+            }
+        }
+
+        function createFloatingEmojis() {
+            const emojis = ['🎅', '🎁', '⛄', '🔔', '🕯️', '🎀'];
+            for (let i = 0; i < 6; i++) {
+                const emoji = document.createElement('div');
+                emoji.className = 'floating-emoji';
+                emoji.innerHTML = emojis[i];
+                emoji.style.left = (i * 16 + 5) + '%';
+                emoji.style.top = Math.random() * 80 + 10 + '%';
+                emoji.style.animationDelay = i * 0.5 + 's';
+                emoji.style.animationDuration = (Math.random() * 5 + 10) + 's';
+                document.body.appendChild(emoji);
+            }
+        }
+
+        function createRibbons() {
+            const ribbons = ['🎀', '🎗️'];
+            for (let i = 0; i < 4; i++) {
+                const ribbon = document.createElement('div');
+                ribbon.className = 'ribbon';
+                ribbon.innerHTML = ribbons[i % 2];
+                ribbon.style.left = (i * 25 + 10) + '%';
+                ribbon.style.top = (i * 25 + 5) + '%';
+                ribbon.style.fontSize = '60px';
+                ribbon.style.animationDelay = i * 2 + 's';
+                document.body.appendChild(ribbon);
+            }
+        }
+
+        // Искры при клике
+        document.addEventListener('click', (e) => {
+            for (let i = 0; i < 8; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = e.clientX + (Math.random() - 0.5) * 80 + 'px';
+                sparkle.style.top = e.clientY + (Math.random() - 0.5) * 80 + 'px';
+                document.body.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 2000);
+            }
+        });
+
+        // Фейерверк
+        function createFirework(x, y) {
+            const colors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#a8e6cf', '#ff8b94'];
+            for (let i = 0; i < 20; i++) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.left = x + 'px';
+                firework.style.top = y + 'px';
+                firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                const angle = (Math.PI * 2 * i) / 20;
+                const velocity = 50 + Math.random() * 50;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+                
+                firework.style.setProperty('--tx', tx + 'px');
+                firework.style.setProperty('--ty', ty + 'px');
+                
+                document.body.appendChild(firework);
+                setTimeout(() => firework.remove(), 1000);
+            }
+        }
+
+        // Обратный отсчет
+        function updateCountdown() {
+            const targetDate = new Date('2025-12-30T00:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const countdownEl = document.getElementById('countdown');
+            if (countdownEl) {
+                if (distance > 0) {
+                    countdownEl.innerHTML = `${days}д ${hours}ч ${minutes}м ${seconds}с`;
+                } else {
+                    countdownEl.innerHTML = "🎉 УЖЕ ДОСТУПНО! 🎉";
+                }
+            }
+        }
+
+        // Проверка подписок (реальный API запрос)
+        async function checkSubscriptions() {
+            if (!userId) return false;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/check_subscription`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const data = await response.json();
+                return data.subscribed;
+            } catch (error) {
+                console.error('Ошибка проверки подписок:', error);
+                return true;
+            }
+        }
+
+        // Проверка рефералов (реальный API запрос)
+        async function checkReferralsCount() {
+            if (!userId) return 0;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/check_referrals`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const data = await response.json();
+                return data.referral_count;
+            } catch (error) {
+                console.error('Ошибка проверки рефералов:', error);
+                return 0;
+            }
+        }
+
+        // Сохранение реферала (реальный API запрос)
+        async function saveReferral() {
+            if (!startParam || !userId || startParam === userId.toString()) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/save_referral`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        inviter_id: parseInt(startParam),
+                        invited_id: userId
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const data = await response.json();
+                if (data.success) {
+                    console.log(`Пользователь ${userId} приглашен пользователем ${startParam}`);
+                }
+            } catch (error) {
+                console.error('Ошибка сохранения реферала:', error);
+            }
+        }
+
+        // Генерация реферальной ссылки
+        function generateReferralLink() {
+            if (!userId) return 'Загрузка...';
+            return `https://t.me/${BOT_USERNAME}?start=${userId}`;
+        }
+
+        // Поделиться реферальной ссылкой
+        function shareReferralLink() {
+            const link = generateReferralLink();
+            const text = `🎄 Получи свои итоги 2025 года в Telegram!\n\n✨ Узнай свою статистику, топ контакты, любимые эмодзи и многое другое!\n\n👉 ${link}`;
+            
+            if (tg.openTelegramLink) {
+                tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
+            } else {
+                navigator.clipboard.writeText(link).then(() => {
+                    tg.showAlert('✅ Ссылка скопирована в буфер обмена!');
+                });
+            }
+
+            createFirework(window.innerWidth / 2, window.innerHeight / 2);
+        }
+
+        // Проверить приглашения
+        async function checkReferrals() {
+            const count = await checkReferralsCount();
+            updateReferralProgress(count);
+            
+            if (count >= 1) {
+                showGiftScreen();
+            } else {
+                tg.showAlert(`У тебя ${count} из 1 приглашенных друзей.\n\nПродолжай приглашать! 🚀`);
+            }
+        }
+
+        // Обновить прогресс рефералов
+        function updateReferralProgress(count) {
+            const progressBar = document.getElementById('referralProgress');
+            const referralCount = document.getElementById('referralCount');
+            
+            if (progressBar) {
+                const percentage = Math.min((count / 1) * 100, 100);
+                progressBar.style.width = percentage + '%';
+            }
+            
+            if (referralCount) {
+                referralCount.textContent = `${count} / 1`;
+            }
+        }
+
+        // Показать экран проверки
+        function showCheckingScreen() {
+            hideAllScreens();
+            document.getElementById('checking').style.display = 'block';
+        }
+
+        // Показать экран подписки
+        function showSubscriptionWarning() {
+            hideAllScreens();
+            document.getElementById('subscriptionWarning').style.display = 'block';
+        }
+
+        // Показать экран рефералов
+        function showReferralScreen() {
+            hideAllScreens();
+            document.getElementById('referralScreen').style.display = 'block';
+            document.getElementById('referralLink').textContent = generateReferralLink();
+        }
+
+        // Показать экран загрузки
+        function showLoadingScreen() {
+            hideAllScreens();
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        // Показать экран подарка
+        function showGiftScreen() {
+            hideAllScreens();
+            document.getElementById('giftScreen').style.display = 'block';
+            
+            setTimeout(() => {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const x = Math.random() * window.innerWidth;
+                        const y = Math.random() * window.innerHeight * 0.5;
+                        createFirework(x, y);
+                    }, i * 300);
+                }
+            }, 500);
+
+            setTimeout(() => {
+                showResultScreen();
+            }, 5000);
+        }
+
+        // Показать экран результата
+        function showResultScreen() {
+            hideAllScreens();
+            document.getElementById('result').style.display = 'block';
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
+
+        // Скрыть все экраны
+        function hideAllScreens() {
+            document.getElementById('checking').style.display = 'none';
+            document.getElementById('subscriptionWarning').style.display = 'none';
+            document.getElementById('referralScreen').style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('giftScreen').style.display = 'none';
+            document.getElementById('result').style.display = 'none';
+        }
+
+        // Главная функция запуска
+        async function init() {
+            await saveReferral();
+            showCheckingScreen();
+            const hasSubscription = await checkSubscriptions();
+
+            if (!hasSubscription) {
+                showSubscriptionWarning();
+                return;
+            }
+
+            const referralCount = await checkReferralsCount();
+            
+            if (referralCount < 1) {
+                showReferralScreen();
+                updateReferralProgress(referralCount);
+                return;
+            }
+
+            showLoadingScreen();
+            setTimeout(() => {
+                showGiftScreen();
+            }, 3000);
+        }
+
+        // Запуск при загрузке
+        window.onload = function() {
+            createSnowflakes();
+            createParticles();
+            createStars();
+            createBokeh();
+            createFloatingEmojis();
+            createRibbons();
+            init();
+        };
+    </script>
+</body>
+</html>
