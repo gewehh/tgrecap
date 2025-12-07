@@ -731,6 +731,32 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+		/* Анимация взрыва конфетти при достижении 1 реферала */
+		@keyframes confetti-burst {
+			0% { transform: scale(0) rotate(0); opacity: 1; }
+			100% { transform: scale(3) rotate(720deg); opacity: 0; }
+		}
+		.confetti {
+			position: fixed;
+			font-size: 40px;
+			pointer-events: none;
+			z-index: 999;
+			animation: confetti-burst 1.5s ease-out forwards;
+		}
+
+		/* Пульсация при достижении цели */
+		@keyframes success-pulse {
+			0%, 100% { transform: scale(1); }
+			50% { transform: scale(1.1); }
+		}
+		.success-glow {
+			animation: success-pulse 1s infinite, glow 2s infinite;
+		}
+		@keyframes glow {
+			0%, 100% { text-shadow: 0 0 20px #00ff00; }
+			50% { text-shadow: 0 0 40px #00ff00, 0 0 60px #00ff00; }
+		}
+		
     </style>
 </head>
 <body>
@@ -773,44 +799,48 @@
             </div>
 
             <!-- Экран реферальной системы -->
-            <div class="referral-screen" id="referralScreen" style="display: none;">
-                <div class="result-title">👥 Пригласи друга!</div>
-                <p style="margin-bottom: 20px;">
-                    Чтобы получить доступ к итогам,<br>пригласи <strong>1 друга</strong> который также выполнит все условия
-                </p>
-                
-                <div class="mega-gift">🎁</div>
+            <!-- Экран реферальной системы — УЛУЧШЕННАЯ ВЕРСИЯ -->
+			<div class="referral-screen" id="referralScreen" style="display: none;">
+				<div class="result-title">Пригласи друга и получи итоги!</div>
+				<p style="margin-bottom: 20px; font-size: 18px;">
+					Осталось пригласить всего <strong>1 друга</strong><br>
+					(он тоже должен зайти и подписаться)
+				</p>
+				
+				<div class="mega-gift">Подарок</div>
 
-                <div class="progress-bar">
-                    <div class="progress-fill" id="referralProgress" style="width: 0%"></div>
-                </div>
-                
-                <p style="margin: 15px 0; font-size: 18px; color: rgba(255, 255, 255, 0.95);">
-                    <strong id="referralCount">0 / 1</strong> друзей
-                </p>
+				<!-- Прогресс-бар стал ярче и красивее -->
+				<div class="progress-bar" style="height: 20px; border-radius: 20px; background: rgba(255,255,255,0.15); box-shadow: inset 0 4px 10px rgba(0,0,0,0.3);">
+					<div class="progress-fill" id="referralProgress" style="width: 0%; background: linear-gradient(90deg, #ff9d00, #ff6b6b, #ff8eed); border-radius: 20px; box-shadow: 0 0 20px rgba(255,107,107,0.8);"></div>
+				</div>
+				
+				<p style="margin: 20px 0; font-size: 32px; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.7);">
+					<span id="referralCount">0</span> / 1
+				</p>
 
-                <div class="badges-container">
-                    <div class="decorative-badge">🚀 Быстро</div>
-                    <div class="decorative-badge">🎯 Легко</div>
-                    <div class="decorative-badge">💎 Награда</div>
-                </div>
+				<!-- Бейджи теперь на тёмном стекле — всегда читаются -->
+				<div class="badges-container" style="gap: 12px;">
+					<div class="decorative-badge" style="background: rgba(255,255,255,255,0.25); color: #fff; border: 1px solid rgba(255,255,255,0.4);">Супер быстро</div>
+					<div class="decorative-badge" style="background: rgba(255,255,255,0.25); color: #fff; border: 1px solid rgba(255,255,255,0.4);">Легко и просто</div>
+					<div class="decorative-badge" style="background: linear-gradient(45deg,#ff6b6b,#ff8b94); color: #fff; animation: pulse 2s infinite;">Гарантированный подарок</div>
+				</div>
 
-                <div class="referral-link" id="referralLink">
-                    Загрузка ссылки...
-                </div>
+				<div class="referral-link" id="referralLink" style="margin: 25px 0; padding: 20px; font-size: 17px; background: rgba(255,255,255,0.25); backdrop-filter: blur(12px);">
+					Загрузка твоей ссылки...
+				</div>
 
-                <button class="btn btn-share" onclick="shareReferralLink()">
-                    📤 Поделиться ссылкой
-                </button>
+				<button class="btn btn-share" onclick="shareReferralLink()">
+					Поделиться ссылкой
+				</button>
 
-                <button class="btn" onclick="checkReferrals()">
-                    🔄 Проверить приглашения
-                </button>
+				<button class="btn" onclick="checkReferrals()">
+					Проверить приглашения
+				</button>
 
-                <p style="margin-top: 20px; font-size: 14px; opacity: 0.8;">
-                    💡 Совет: Отправь ссылку другу в личку!
-                </p>
-            </div>
+				<p style="margin-top: 25px; font-size: 15px; opacity: 0.9;">
+					Подсказка: отправь ссылку другу в личку — он зайдёт за 10 секунд и ты сразу получишь итоги!
+				</p>
+			</div>
 
             <!-- Экран загрузки -->
             <div class="loading" id="loading" style="display: none;">
@@ -1167,19 +1197,53 @@
         }
 
         // Обновить прогресс рефералов
-        function updateReferralProgress(count) {
-            const progressBar = document.getElementById('referralProgress');
-            const referralCount = document.getElementById('referralCount');
-            
-            if (progressBar) {
-                const percentage = Math.min((count / 1) * 100, 100);
-                progressBar.style.width = percentage + '%';
-            }
-            
-            if (referralCount) {
-                referralCount.textContent = `${count} / 1`;
-            }
+        // Обновить прогресс рефералов + КОНФЕТТИ ПРИ ПОБЕДЕ
+function updateReferralProgress(count) {
+    const progressBar = document.getElementById('referralProgress');
+    const referralCount = document.getElementById('referralCount');
+    
+    referralCount.textContent = count;
+    const percentage = Math.min(count * 100, 100);
+    progressBar.style.width = percentage + '%';
+
+    // === МАГИЯ: когда 1 друг приглашён ===
+    if (count >= 1 && !window.referralSuccessShown) {
+        window.referralSuccessShown = true;
+
+        // Конфетти-взрыв
+        const emojis = ['🎉','✨','🎊','🎈','🎁','⭐','🔥','💎'];
+        for (let i = 0; i < 40; i++) {
+            setTimeout(() => {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.innerHTML = emojis[Math.floor(Math.random()*emojis.length)];
+                c.style.left = (Math.random()*100) + 'vw';
+                c.style.top = (Math.random()*100) + 'vh';
+                c.style.animationDelay = Math.random()*0.5 + 's';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 2000);
+            }, i*50);
         }
+
+        // Зелёная надпись
+        referralCount.classList.add('success-glow');
+        referralCount.style.fontSize = '48px';
+
+        setTimeout(() => {
+            showGiftScreen();
+        }, 2500);
+    }
+}
+
+// Проверка рефералов
+async function checkReferrals() {
+    const count = await checkReferralsCount();
+    updateReferralProgress(count);
+    
+    if (count < 1) {
+        tg.showAlert(`У тебя ${count} из 1 друга\n\nПригласи ещё одного — и итоги твои!`);
+    }
+}
 
         // Показать экран проверки
         function showCheckingScreen() {
@@ -1260,6 +1324,7 @@
             if (referralCount < 1) {
                 showReferralScreen();
                 updateReferralProgress(referralCount);
+document.getElementById('referralLink').textContent = generateReferralLink();
                 return;
             }
 
